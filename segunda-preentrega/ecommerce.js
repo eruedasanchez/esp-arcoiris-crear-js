@@ -201,6 +201,84 @@ const aplicarFiltroTipos = (productos) => {
     return productos;
 }
 
+const buscar = (productos, producto) => {
+    let infoProducto;
+    for(const item of productos){
+        if(item.nombre === producto){
+            infoProducto = item;
+        }
+    }
+    return infoProducto;
+}
+
+const hayStock = (productos, producto, cantidad) => {
+    // Se asume que el producto se encuentra en el array de objetos
+    let stockDisponible = false;
+    const productoSeleccionado = buscar(productos, producto);
+    if(productoSeleccionado.stock >= cantidad){
+        stockDisponible = true;
+    }
+    return stockDisponible; 
+}
+
+const tramitarPagoSegun = (producto, cantidad, precio, pago) => {
+    alert(`Comenzamos el proceso de pago de ${cantidad} unidades de ${producto}. Presione enter para continuar.`);
+    let precioRegular = precio * cantidad;
+    let descuento;
+    let precioFinal;
+    switch(pago){
+        case "Transferencia bancaria":
+            alert(`Ha elegido abonar su pedido con transferencia bancaria. Le comentamos que al abonar con este medio de pago tiene un 10% de descuento`);    
+            descuento = precioRegular  * 0.10;
+            precioFinal = precioRegular - descuento;
+            alert(`El precio unitario de ${producto} es de $${precio}. Al elegir este medio de pago usted tiene un descuento de $${descuento} y el precio final es de $${precioFinal}. Presione enter para confirmar la compra.`);           
+            break;
+
+        case "MercadoPago":
+            alert(`Ha elegido abonar su pedido con MercadoPago. Le comentamos que al abonar con este medio de pago tiene un 15% de descuento`);    
+            descuento = precioRegular  * 0.15;
+            precioFinal = precioRegular - descuento;
+            alert(`El precio unitario de ${producto} es de $${precio}. Al elegir este medio de pago usted tiene un descuento de $${descuento} y el precio final es de $${precioFinal}. Presione enter para confirmar la compra.`);           
+            break;
+
+        case "Tarjeta de Credito":
+            alert(`Ha elegido abonar su pedido con Tarjeta de credito. Le comentamos que al abonar con este medio de pago tiene un 10% de descuento`);    
+            // Completar     
+            break;
+            
+        case "Cryptomonedas":
+            alert(`Ha elegido abonar su pedido con Cryptomonedas. Le comentamos que al abonar con este medio de pago tiene un 7% de descuento`);    
+            descuento = precioRegular  * 0.07;
+            precioFinal = precioRegular - descuento;
+            alert(`El precio unitario de ${producto} es de $${precio}. Al elegir este medio de pago usted tiene un descuento de $${descuento} y el precio final es de $${precioFinal}. Presione enter para confirmar la compra.`);           
+            break;
+            
+        default:
+            alert(`El medio de pago elegido no se encuentra disponible. Presione enter para ver el listado de productos sin filtros.`);
+            break;
+    }
+}
+
+const realizarCompra = (productos) => {
+    alert(`Excelente. A continuacion, le dejamos el listado de los productos que puede comprar son:`);
+    productos.forEach((item) => {
+        alert(`Nombre: ${item.nombre}`);
+    });
+    let productoAComprar = prompt("Ahora, ingrese el nombre del producto que desea adquirir");
+    let cantidadAComprar = prompt('Por ultimo, ingrese la cantidad de ' + productoAComprar + ' que desea adquirir');
+    if(hayStock(productos, productoAComprar, cantidadAComprar)){
+        alert(`Excelente! Contamos con stock suficiente de ${productoAComprar} para satisfacer su pedido. Presione enter para comenzar el proceso de pago del pedido realizado.`);
+        alert(`Contamos con los siguientes metodos de pago: Transferencia bancaria, Tarjeta de credito, Mercadopago o Cryptomonedas`);
+        let infoProducto = buscar(productos, productoAComprar);
+        let precioProducto = infoProducto.precio;
+        let formaPago = prompt("Por favor, ingrese el medio elegido");
+        tramitarPagoSegun(productoAComprar, cantidadAComprar, precioProducto, formaPago);
+    } else {
+        alert(`Lo sentimos mucho. No hay stock suficiente de ${productoAComprar}. A continuacion, le solicitaremos un email para notificarle cuando se reponga el stock. Presione enter para continuar`);
+        let email = prompt('Por favor, ingrese su email asi le notificamos cuando haya nuevamente stock de' + productoAComprar);
+        alert(`Perfecto, su email ${email} ha sido almacenado correctamente. Muchas gracias por confiar en nosotros.`);
+    }
+}
 
 
 
@@ -213,4 +291,4 @@ let cliente = prompt("Ahora, vamos a comenzar con el proceso de compra de produc
 saludar(cliente);
 let categoria = prompt("Ingrese el nombre de la categoria por la que desea filtrar productos o presione cualquier tecla si no quiere filtrar por ninguna categoria.");
 filtrarPor(productos,categoria);
-
+realizarCompra(productos);
