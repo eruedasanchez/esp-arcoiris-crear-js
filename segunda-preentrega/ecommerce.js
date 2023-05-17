@@ -45,38 +45,43 @@ const cargaExitosa = (admin, productos, cantProductos) => {
 
 /****************** FUNCIONALIDAD POR PARTE DEL CLIENTE ******************/
 
-/** Verificar que el nombre ingresado sea valido **/
+/** Verificar que el nombre ingresado por el cliente sea valido **/
 
-const saludar = (cliente) => {
-    if(cliente === ""){
+const saludar = (clientName) => {
+    if(clientName === ""){
         alert(`Nombre invalido! Por favor, presione enter, recargue la pagina e intente nuevamente. Muchas gracias.`);
     } else {
-        alert(`Bienvenido ${cliente}! Presione enter para continuar comenzar la compra.`);
+        alert(`Bienvenido ${clientName}! Presione enter para comenzar su compra.`);
     }
 }
 
-const filtrarPor = (productos, categoria) => {
-    const productosEncontrados = productos;
-    if(categoria === "nombre"){
-        productosEncontrados = aplicarFiltroNombres(productos);
-    } else if(categoria === "precio"){
-        productosEncontrados = aplicarFiltroPrecios(productos);
-    } else if(categoria === "stock"){
-        productosEncontrados = aplicarFiltroStocks(productos);
-    } else if(categoria === "id"){
-        productosEncontrados = aplicarFiltroIds(productos);
-    } else if(categoria === "tipo"){
-        productosEncontrados = aplicarFiltroTipos(productos);
+/** Filtrar productos por la categoria ingresada por el cliente **/
+
+const filtrarPor = (cat, prods) => {
+    const prodsEncontrados = prods;
+    if(cat === "nombre"){
+        prodsEncontrados = filtrarPorNombre(prods);
+    } else if(cat === "precio"){
+        prodsEncontrados = filtrarPorPrecio(prods);
+    } else if(cat === "stock"){
+        prodsEncontrados = filtrarPorStock(prods);
+    } else if(cat === "id"){
+        prodsEncontrados = filtrarPorId(prods);
+    } else if(cat === "tipo"){
+        prodsEncontrados = filtrarPorTipo(prods);
     }
-    return productosEncontrados;
+    return prodsEncontrados;
 }
 
-const aplicarFiltroNombres = (productos) => {
-    let filtro = prompt("Ingrese creciente si desea filtrar los productos alfabeticamente de menor a mayor, decreciente en caso contrario o por algun nombre en particular");
+/** Subfiltrado de productos por nombre **/
+
+const filtrarPorNombre = (prods) => {
+    alert(`En esta seccion, puede optar por los siguientes filtros: \n 1) creciente: los productos se filtran alfabeticamente de menor a mayor \n 2) decreciente: los productos se filtran alfabeticamente de mayor a menor \n 3) nombre: los productos se filtran por un nombre en particular`);
+    const prodsFiltrados = prods;
+    let filtro = prompt("Ahora, ingrese el nombre del filtro que quiere aplicar y presione enter para continuar.");
     switch(filtro){
         case "creciente":
-            alert(`Ha elegido filtrar los productos ordenados alfabeticamente de menor a mayor`);
-            productos.sort((a,b) => {
+            prods.sort((a,b) => {
                 if(a.nombre > b.nombre){
                     return 1;
                 } 
@@ -86,11 +91,12 @@ const aplicarFiltroNombres = (productos) => {
                 // a es igual a b
                 return 0;
             });
+            prodsFiltrados = prods;
             break;
             
         case "decreciente":
             alert(`Ha elegido filtrar los productos ordenados alfabeticamente de mayor a menor`);
-            productos.sort((a,b) => {
+            prods.sort((a,b) => {
                 if(a.nombre > b.nombre){
                     return -1;
                 } 
@@ -100,107 +106,107 @@ const aplicarFiltroNombres = (productos) => {
                 // a es igual a b
                 return 0;
             });
+            prodsFiltrados = prods;
             break;
 
         case "nombre":
-            alert(`Ha elegido filtrar los productos por el nombre ${filtro}`);
-            productos = productos.filter(products => products.nombre === filtro);            
+            let nameFilter = prompt("Ha elegido filtrar los productos por un nombre en particular. \n Ahora, ingrese el nombre del producto.");
+            prodsFiltrados = prods.filter(products => products.nombre === nameFilter);            
             break;
         
         default:
-            alert(`El filtro elegido no se encuentra disponible. Presione enter para ver el listado de productos sin filtros.`);
+            alert(`El filtro elegido es incorrecto. Por defecto, no se aplica ningun filtro.`);
             break;
     }
-    return productos;
+    return prodsFiltrados;
 } 
 
-const aplicarFiltroPrecios = (productos) => {
-    let valor = parseInt(prompt("Ingrese el valor por el desea filtrar los productos"));
-    let operacion = prompt("Ahora, ingrese la operacion (mayor, menor o igual) por la que desea filtrar");
-    if(operacion === "mayor"){
-        alert(`Ha elegido filtrar los productos mayores a $${valor}`);
-        productos = productos.filter(products => products.precio > valor);
-    } else if(operacion === "menor"){
-        alert(`Ha elegido filtrar los productos menores a $${valor}`);
-        productos = productos.filter(products => products.precio < valor);
-    } else if(operacion === "igual"){
-        alert(`Ha elegido filtrar los productos iguales a $${valor}`);
-        productos = productos.filter(products => products.precio === valor);
+/** Subfiltrado de productos por precio **/
+
+const filtrarPorPrecio = (prods) => {
+    let valor = parseInt(prompt("Primero, ingrese el valor por el desea filtrar."));
+    let limite = prompt("Ahora, ingrese el limite (maximo, minimo o igual precio).");
+    const prodsFiltrados = prods;
+    if(limite === "maximo"){
+        prodsFiltrados = prods.filter(products => products.precio > valor);
+    } else if(limite === "minimo"){
+        prodsFiltrados = prods.filter(products => products.precio < valor);
+    } else if(limite === "igual"){
+        prodsFiltrados = prods.filter(products => products.precio === valor);
     } else {
-        alert(`El filtro elegido no se encuentra disponible. Presione enter para ver el listado de productos sin filtros.`);
+        alert(`El filtro elegido es incorrecto. Por defecto, no se aplica ningun filtro.`);
     }
-    return productos;
+    return prodsFiltrados;
 }
 
-const aplicarFiltroStocks = (productos) => {
-    let stock = parseInt(prompt("Ingrese el stock por el desea filtrar los productos"));
-    let operacion = prompt("Ahora, ingrese la operacion (mayor, menor o igual) por la que desea filtrar");
-    if(operacion === "mayor"){
-        alert(`Ha elegido filtrar los productos que tengan un stock mayor a ${stock}`);
-        productos = productos.filter(products => products.stock > stock);
-    } else if(operacion === "menor"){
-        alert(`Ha elegido filtrar los productos que tengan un stock menor a ${stock}`);
-        productos = productos.filter(products => products.stock < stock);
-    } else if(operacion === "igual"){
-        alert(`Ha elegido filtrar los productos que tengan un stock igual a ${stock}`);
-        productos = productos.filter(products => products.stock === stock);
+/** Subfiltrado de productos por stock **/
+
+const filtrarPorStock = (prods) => {
+    let cantStock = parseInt(prompt("Ingrese el numero de stock por el desea filtrar."));
+    let limite = prompt("Ahora, ingrese el limite (maximo, minimo o igual stock).");
+    const prodsFiltrados = prods;
+    if(limite === "maximo"){
+        prodsFiltrados = prods.filter(products => products.stock > cantStock);
+    } else if(limite === "minimo"){
+        prodsFiltrados = prods.filter(products => products.stock < cantStock);
+    } else if(limite === "igual"){
+        prodsFiltrados = prods.filter(products => products.stock === cantStock);
     } else {
-        alert(`El filtro elegido no se encuentra disponible. Presione enter para ver el listado de productos sin filtros.`);
+        alert(`El filtro elegido es incorrecto. Por defecto, no se aplica ningun filtro.`);
     }
-    return productos;
+    return prodsFiltrados;
 }
+
+/** Subfiltrado de productos por id's **/
     
-const aplicarFiltroIds = (productos) => {
-    let id = parseInt(prompt("Ingrese el id por el desea filtrar los productos"));
-    let operacion = prompt("Ahora, ingrese la operacion (mayor, menor o igual) por la que desea filtrar");
+const filtrarPorId = (prods) => {
+    let identificador = parseInt(prompt("Ingrese el numero de id por el desea filtrar."));
+    let operacion = prompt("Ahora, ingrese la operacion (mayor, menor o igual) a aplicar.");
+    const prodsFiltrados = prods;
     if(operacion === "mayor"){
-        alert(`Ha elegido filtrar los productos que tengan un id mayor a ${id}`);
-        productos = productos.filter(products => products.id > id);
+        prodsFiltrados = prods.filter(products => products.id > identificador);
     } else if(operacion === "menor"){
-        alert(`Ha elegido filtrar los productos que tengan un id menor a ${id}`);
-        productos = productos.filter(products => products.id < id);
+        prodsFiltrados = prods.filter(products => products.id < identificador);
     } else if(operacion === "igual"){
-        alert(`Ha elegido filtrar los productos que tengan un id igual a ${id}`);
-        productos = productos.filter(products => products.id === id);
+        prodsFiltrados = prods.filter(products => products.id === identificador);
     } else {
-        alert(`El filtro elegido no se encuentra disponible. Presione enter para ver el listado de productos sin filtros.`);
+        alert(`El filtro elegido es incorrecto. Por defecto, no se aplica ningun filtro.`);
     }
-    return productos;
+    return prodsFiltrados;
 }
 
-const aplicarFiltroTipos = (productos) => {
-    let tipo = prompt("Ingrese el tipo del producto por el desea filtrar");
+/** Subfiltrado de productos por tipo **/
+
+const filtrarPorTipo = (prods) => {
+    alert(`En esta seccion, puede optar por los siguientes filtros: \n 1) herramientas: se muestran todos los productos de tipo herramienta \n 2) insumos: se muestran todos los productos de tipo insumo \n 3) workshops: se muestran todos los productos de tipo workshop \n 4) seminarios: se muestran todos los productos de tipo seminario \n 5) cursos: se muestran todos los productos de tipo curso`);
+    let tipo = prompt("Ahora, ingrese el tipo del producto.");
+    const prodsFiltrados = prods;
     switch(tipo){
         case "herramientas":
-            alert(`Ha elegido filtrar los productos por el nombre ${tipo}`);    
-            productos = productos.filter(products => products.tipo === "herramientas");            
+            prodsFiltrados = prods.filter(products => products.tipo === "herramientas");            
             break;
 
         case "insumos":
-            alert(`Ha elegido filtrar los productos por el nombre ${tipo}`);    
-            productos = productos.filter(products => products.tipo === "insumos");            
+            prodsFiltrados = prods.filter(products => products.tipo === "insumos");            
             break;
                 
         case "workshops":
-            alert(`Ha elegido filtrar los productos por el nombre ${tipo}`);    
-            productos = productos.filter(products => products.tipo === "workshops");            
+            prodsFiltrados = prods.filter(products => products.tipo === "workshops");            
             break;
                     
         case "seminarios":
-            alert(`Ha elegido filtrar los productos por el nombre ${tipo}`);    
-            productos = productos.filter(products => products.tipo === "seminarios");            
+            prodsFiltrados = prods.filter(products => products.tipo === "seminarios");            
             break;
                         
         case "cursos":
-            alert(`Ha elegido filtrar los productos por el nombre ${tipo}`);    
-            productos = productos.filter(products => products.tipo === "cursos");            
+            prodsFiltrados = productos.filter(products => products.tipo === "cursos");            
             break;
             
         default:
-            alert(`El filtro elegido no se encuentra disponible. Presione enter para ver el listado de productos sin filtros.`);
+            alert(`El filtro elegido es incorrecto. Por defecto, no se aplica ningun filtro.`);
             break;
     }
-    return productos;
+    return prodsFiltrados;
 }
 
 const buscar = (productos, producto) => {
@@ -261,6 +267,8 @@ const tramitarPagoSegun = (producto, cantidad, precio, pago) => {
     }
 }
 
+/** Proceso de efectuar compra por parte del cliente **/
+
 const realizarCompra = (productos) => {
     alert(`Excelente. A continuacion, le dejamos el listado de los productos que puede comprar son:`);
     productos.forEach((item) => {
@@ -287,15 +295,16 @@ const realizarCompra = (productos) => {
 /****************** SIMULADOR INTERACTIVO & ECOMMERCE ESPACIO ARCOIRIS CREAR ******************/
 
 // Seccion Administracion
-let administrador = prompt("Bienvenido al administrador e-commerce emergente de Espacio Arcoiris Crear. Ingrese su nombre para continuar");
+let administrador = prompt("Bienvenido al administrador e-commerce emergente de Espacio Arcoiris Crear. Ingrese su nombre para continuar.");
 saludoInicial(administrador);
-let cantProductos = parseInt(prompt(administrador + ' ingrese la cantidad de productos que desea cargar en el sistema'));
+let cantProductos = parseInt(prompt(administrador + ' ingrese la cantidad de productos que desea cargar en el sistema.'));
 const productos = cargarProductos(cantProductos);
 cargaExitosa(administrador, productos, cantProductos);
 
 // Seccion Cliente
-let cliente = prompt("Ahora, vamos a comenzar con el proceso de compra de productos. Por favor, ingrese su nombre"); 
-saludar(cliente);
-let categoria = prompt("Ingrese el nombre de la categoria por la que desea filtrar productos o presione cualquier tecla si no quiere filtrar por ninguna categoria.");
-filtrarPor(productos,categoria);
-realizarCompra(productos);
+let nombreCliente = prompt("Ahora, vamos a comenzar con el proceso de compra de productos. Por favor, ingrese su nombre."); 
+saludar(nombreCliente);
+let categoria = prompt(nombreCliente + ' , ingrese el nombre de la categoria por la que desea filtrar (nombre, precio, stock, id o tipo) o presione cualquier tecla si desea ver el listado completo de productos.');
+const productosEncontrados = filtrarPor(categoria, productos);
+realizarCompra(productosEncontrados);
+
