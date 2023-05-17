@@ -1,14 +1,4 @@
-/* Pequeño simulador ecommerce de Espacio Arcoiris Crear */
-
-/* Funcionalidad del ecommerce dueño-usuario */
-
-/*
-
-1. Registrar productos con sus respectivos nombres, precios, stock, id y categoria (dueño)
-2. Comprar productos se van a permitir busquedas, filtros, metodos de pago, etc (usuario)
-3. Actualizar el stock
-
-*/
+/* Pequeño simulador interactivo & ecommerce emergente de Espacio Arcoiris Crear */
 
 class Producto{
     constructor(nombre, precio, stock, id, tipo){
@@ -20,30 +10,42 @@ class Producto{
     }
 }
 
-/* Saludo inicial */
+/************************** FUNCIONES DEL SIMULADOR & ECOMMERCE **************************/ 
 
-const saludoInicial = () => {
-    alert(`Bienvenido al e-commerce emergente de Espacio Arcoiris Crear. Vamos a comenzar cargando los productos en la tienda. Presione enter para continuar`);
+/****************** FUNCIONALIDAD DEL ADMINISTRADOR ******************/
+
+/** Saludo inicial al administrador **/
+
+const saludoInicial = (admin) => {
+    alert(`${admin}, vamos a comenzar cargando los productos en la tienda. Presione enter para continuar`);
 }
 
-/* Carga de productos */
+/** Carga de productos **/
 
 const cargarProductos = (cantProductos) => {
-    const productos = []; // Arreglo donde se va a almacenar los productos que se agregue al ecommerce
+    const prods = [];     // Arreglo donde se va a almacenar los productos que se agregue a la tienda
     for(let i=0; i < cantProductos; i++){
-        let nombreProducto = prompt('Ingrese el nombre del producto numero ' + (i+1));
-        let precioProducto = prompt('Ingrese el precio del producto numero ' + (i+1));
-        let stockProducto = parseInt(prompt('Ingrese el stock del producto numero ' + (i+1)));
-        let idProducto = prompt('Ingrese el id del producto numero ' + (i+1));
-        let tipoProducto = prompt('Ingrese la categoria del producto numero ' + (i+1));
-        const nuevoProducto = new Producto(nombreProducto, precioProducto, stockProducto, idProducto, tipoProducto);
+        let nombreNuevoProducto = prompt('Ingrese el nombre del producto numero ' + (i+1));
+        let precioNuevoProducto = parseInt(prompt('Ingrese el precio (solo numeros naturales sin signo $) del producto numero ' + (i+1)));
+        let stockNuevoProducto = parseInt(prompt('Ingrese el stock (solo numeros naturales) del producto numero ' + (i+1)));
+        let idNuevoProducto = prompt('Ingrese el id del producto numero ' + (i+1));
+        let tipoNuevoProducto = prompt('Ingrese la categoria del producto numero ' + (i+1));
+        const nuevoProducto = new Producto(nombreNuevoProducto, precioNuevoProducto, stockNuevoProducto, idNuevoProducto, tipoNuevoProducto);
         productos.push(nuevoProducto);
     }
-    alert(`Felicitaciones. Todos sus productos han sido cargados con exito. Presione enter para ver el listado de productos`);
+    return prods;
+}
+
+/** Carga exitosa de productos **/
+
+const cargaExitosa = (admin, productos, cantProductos) => {
+    alert(`Felicitaciones ${admin}! Todos sus productos han sido cargados con exito. Presione enter para ver el listado de productos`);
     alert(JSON.stringify(productos, null, cantProductos+1));
 }
 
-/**************************************** verificarNombreValido ****************************************/
+/****************** FUNCIONALIDAD POR PARTE DEL CLIENTE ******************/
+
+/** Verificar que el nombre ingresado sea valido **/
 
 const saludar = (cliente) => {
     if(cliente === ""){
@@ -282,11 +284,16 @@ const realizarCompra = (productos) => {
 
 
 
-/** Funcionalidad del ecommerce */
+/****************** SIMULADOR INTERACTIVO & ECOMMERCE ESPACIO ARCOIRIS CREAR ******************/
 
-saludoInicial();
-let cantProductos = parseInt(prompt("Por favor, ingrese la cantidad de productos que desea cargar en el sistema"));
-cargarProductos(cantProductos);
+// Seccion Administracion
+let administrador = prompt("Bienvenido al administrador e-commerce emergente de Espacio Arcoiris Crear. Ingrese su nombre para continuar");
+saludoInicial(administrador);
+let cantProductos = parseInt(prompt(administrador + ' ingrese la cantidad de productos que desea cargar en el sistema'));
+const productos = cargarProductos(cantProductos);
+cargaExitosa(administrador, productos, cantProductos);
+
+// Seccion Cliente
 let cliente = prompt("Ahora, vamos a comenzar con el proceso de compra de productos. Por favor, ingrese su nombre"); 
 saludar(cliente);
 let categoria = prompt("Ingrese el nombre de la categoria por la que desea filtrar productos o presione cualquier tecla si no quiere filtrar por ninguna categoria.");
