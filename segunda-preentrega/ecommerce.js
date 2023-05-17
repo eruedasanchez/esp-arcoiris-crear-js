@@ -209,90 +209,129 @@ const filtrarPorTipo = (prods) => {
     return prodsFiltrados;
 }
 
-const buscar = (productos, producto) => {
-    let infoProducto;
-    for(const item of productos){
-        if(item.nombre === producto){
-            infoProducto = item;
+/** Buscar la informacion de un producto por el nombre **/
+
+const buscar = (prodsEncontrados, nombreProd) => {
+    for(const item of prodsEncontrados){
+        if(item.nombre === nombreProd){
+            const infoProd = item;
         }
     }
-    return infoProducto;
+    return infoProd;
 }
 
-const hayStock = (productos, producto, cantidad) => {
-    // Se asume que el producto se encuentra en el array de objetos
-    let stockDisponible = false;
-    const productoSeleccionado = buscar(productos, producto);
-    if(productoSeleccionado.stock >= cantidad){
-        stockDisponible = true;
+/** Cobro efectuado con tarjeta de credito */
+
+const cobrarConTarjetaCredito = (nombre, cantidad, precio, pago) => {
+    alert(`Ha elegido abonar su pedido con Tarjeta de credito. \n Al abonar con este medio de pago tiene un recargo del 30% y hasta 6 cuotas sin interes`);
+    let recargo = precioRegular * 0.3;
+    precioFinal = precioRegular + recargo;
+    alert(`El costo regular de su pedido de ${cantidad} unidades de ${nombre} es de $${precioRegular}. \n Con este medio de pago, el recargo es de $${recargo} y el valor final es de $${precioFinal}. \n Presione enter para continuar la compra.`);
+    let cantCuotas = parseInt(prompt("Ahora, ingrese la cantidad de cuotas en las que desea abonar su pedido (entre 1 y 12 inclusive)"));
+    if((cantCuotas >= 1) && (cantCuotas <= 6)){
+        let valorCuota = precioFinal / cantCuotas;
+        alert(`Estimado cliente. Usted va a abonar ${cantCuotas} fijas sin intereses de $${valorCuota}. \n Presione enter para confirmar la compra.`);
+    } else if((cantCuotas > 6) && (cantCuotas <= 12)){
+        alert(`Estimado cliente. Al elegir ${cantCuotas} cuotas, se le cobrara un recargo adicional del 5% por impuestos de tarjeta sobre el valor final de su pedido. \n Presione enter para continuar.`);
+        let impuesto = precioFinal * 0.05;
+        precioFinal += impuesto;
+        valorCuota = precioFinal / cantCuotas;
+        alert(`Estimado cliente. Usted va a abonar ${cantCuotas} fijas de $${valorCuota}. \n Presione enter para confirmar la compra.`);
+    } else {
+        alert(`Numero de cuotas incorrecto. Por favor, ingrese un numero entre 1 y 12 inclusive e intente nuevamente.`);
     }
-    return stockDisponible; 
+
 }
 
-const tramitarPagoSegun = (producto, cantidad, precio, pago) => {
-    alert(`Comenzamos el proceso de pago de ${cantidad} unidades de ${producto}. Presione enter para continuar.`);
+/** Realizar el cobro del producto **/
+
+const tramitarPagoSegun = (nombre, cantidad, precio, pago) => {
+    alert(`Comenzamos el proceso de pago de ${cantidad} unidades de ${nombre}. Presione enter para continuar.`);
     let precioRegular = precio * cantidad;
-    let descuento;
+    let descuento = 0;
     let precioFinal;
     switch(pago){
         case "Transferencia bancaria":
-            alert(`Ha elegido abonar su pedido con transferencia bancaria. Le comentamos que al abonar con este medio de pago tiene un 10% de descuento`);    
-            descuento = precioRegular  * 0.10;
+            alert(`Ha elegido abonar con transferencia bancaria. Al abonar con este medio de pago tiene un 10% de descuento`);    
+            descuento = precioRegular * 0.10;
             precioFinal = precioRegular - descuento;
-            alert(`El precio unitario de ${producto} es de $${precio}. Al elegir este medio de pago usted tiene un descuento de $${descuento} y el precio final es de $${precioFinal}. Presione enter para confirmar la compra.`);           
+            alert(`El costo regular de su pedido de ${cantidad} unidades de ${nombre} es de $${precioRegular}. \n Con este medio de pago, obtiene un descuento de $${descuento} y el valor final es de $${precioFinal}. \n Presione enter para confirmar la compra.`);           
             break;
 
-        case "MercadoPago":
-            alert(`Ha elegido abonar su pedido con MercadoPago. Le comentamos que al abonar con este medio de pago tiene un 15% de descuento`);    
-            descuento = precioRegular  * 0.15;
+        case "Mercadopago":
+            alert(`Ha elegido abonar su pedido con Mercadopago. Al abonar con este medio de pago tiene un 15% de descuento`);    
+            descuento = precioRegular * 0.15;
             precioFinal = precioRegular - descuento;
-            alert(`El precio unitario de ${producto} es de $${precio}. Al elegir este medio de pago usted tiene un descuento de $${descuento} y el precio final es de $${precioFinal}. Presione enter para confirmar la compra.`);           
+            alert(`El costo regular de su pedido de ${cantidad} unidades de ${nombre} es de $${precioRegular}. \n Con este medio de pago, obtiene un descuento de $${descuento} y el valor final es de $${precioFinal}. \n Presione enter para confirmar la compra.`);           
             break;
 
-        case "Tarjeta de Credito":
-            alert(`Ha elegido abonar su pedido con Tarjeta de credito. Le comentamos que al abonar con este medio de pago tiene un 10% de descuento`);    
-            // Completar     
+        case "Tarjeta de credito":
+            cobrarConTarjetaCredito(nombre, cantidad, precio, pago);     
             break;
             
-        case "Cryptomonedas":
-            alert(`Ha elegido abonar su pedido con Cryptomonedas. Le comentamos que al abonar con este medio de pago tiene un 7% de descuento`);    
+        case "Criptomonedas":
+            alert(`Ha elegido abonar su pedido con Criptomonedas. Al abonar con este medio de pago tiene un 7% de descuento`);    
             descuento = precioRegular  * 0.07;
             precioFinal = precioRegular - descuento;
-            alert(`El precio unitario de ${producto} es de $${precio}. Al elegir este medio de pago usted tiene un descuento de $${descuento} y el precio final es de $${precioFinal}. Presione enter para confirmar la compra.`);           
+            alert(`El costo regular de su pedido de ${cantidad} unidades de ${nombre} es de $${precioRegular}. \n Con este medio de pago, obtiene un descuento de $${descuento} y el valor final es de $${precioFinal}. \n Presione enter para confirmar la compra.`);           
             break;
             
         default:
-            alert(`El medio de pago elegido no se encuentra disponible. Presione enter para ver el listado de productos sin filtros.`);
+            alert(`El medio de pago elegido no se encuentra disponible. Intente nuevamente probando con los medios de pago mencionados.`);
             break;
+    }
+}
+
+/** Informar al cliente acerca del retiro del pedido segun medio de pago **/
+
+const informarRetiroPedido = (medioPago) => {
+    if(medioPago === "Transferencia bancaria"){
+        alert(`Felicitaciones, su compra fue confirmada con exito. Envie su comprobante de pago a avisosdepagoesparcoiris@gmail.com y aguarde por la confirmacion para retirar su pedido. \n Muchas gracias por elegirnos`);
+    } else if(medioPago === "Mercadopago"){
+        alert(`Felicitaciones, su compra fue confirmada con exito. Envie su comprobante de pago a avisosdepagoesparcoiris@gmail.com y aguarde por la confirmacion para retirar su pedido. \n Muchas gracias por elegirnos`);
+    } else if(medioPago === "Tarjeta de credito"){
+        alert(`Felicitaciones, su compra fue confirmada con exito. Puede pasar a retirar su pedido de lunes a viernes de 9 a 18hs por nuestro local de Avenida Rivadavia 5700, CABA. \n Muchas gracias por elegirnos`);
+    } else if(medioPago === "Criptomonedas"){
+        alert(`Felicitaciones, su compra fue confirmada con exito. Recuerde que solo aceptamos USDT y BTC; y que debera abonar en nuestro deposito ubicado en Pedro Goyena 200 de lunes a viernes de 10 a 14hs . \n Muchas gracias por elegirnos`);
     }
 }
 
 /** Proceso de efectuar compra por parte del cliente **/
 
-const realizarCompra = (productos) => {
-    alert(`Excelente. A continuacion, le dejamos el listado de los productos que puede comprar son:`);
-    productos.forEach((item) => {
-        alert(`Nombre: ${item.nombre}`);
-    });
-    let productoAComprar = prompt("Ahora, ingrese el nombre del producto que desea adquirir");
-    let cantidadAComprar = prompt('Por ultimo, ingrese la cantidad de ' + productoAComprar + ' que desea adquirir');
-    if(hayStock(productos, productoAComprar, cantidadAComprar)){
-        alert(`Excelente! Contamos con stock suficiente de ${productoAComprar} para satisfacer su pedido. Presione enter para comenzar el proceso de pago del pedido realizado.`);
-        alert(`Contamos con los siguientes metodos de pago: Transferencia bancaria, Tarjeta de credito, Mercadopago o Cryptomonedas`);
-        let infoProducto = buscar(productos, productoAComprar);
-        let precioProducto = infoProducto.precio;
-        let formaPago = prompt("Por favor, ingrese el medio elegido");
-        tramitarPagoSegun(productoAComprar, cantidadAComprar, precioProducto, formaPago);
+const realizarCompra = (prodsEncontrados) => {
+    if(prodsEncontrados.length === 0){
+        // No hay productos disponibles con el filtro aplicado
+        alert(`Ups! Lo sentimos mucho. No se encontraron productos disponibles con el filtro seleccionado. Recargue la pagina para comenzar nuevamente con busqueda`);
     } else {
-        alert(`Lo sentimos mucho. No hay stock suficiente de ${productoAComprar}. A continuacion, le solicitaremos un email para notificarle cuando se reponga el stock. Presione enter para continuar`);
-        let email = prompt('Por favor, ingrese su email asi le notificamos cuando haya nuevamente stock de' + productoAComprar);
-        alert(`Perfecto, su email ${email} ha sido almacenado correctamente. Muchas gracias por confiar en nosotros.`);
+        // Hay productos disponibles con el filtro aplicado
+        const nombreProductosEncontrados = [];
+        alert(`Excelente. A continuacion, le dejamos el listado de los productos que puede comprar.`);
+        prodsEncontrados.forEach((prod) => {
+            nombreProductosEncontrados.push(prod.nombre);
+        });
+        alert(nombreProductosEncontrados);
+        let nombreProductoComprar = prompt("Ahora, ingrese el nombre del producto que desea adquirir");
+        let cantidadProductoComprar = parseInt(prompt('Ingrese la cantidad de ' + nombreProductoComprar + ' que desea comprar'));
+        const infoProductoElegido = buscar(prodsEncontrados, nombreProductoComprar);
+        if(infoProductoElegido.stock >= cantidadProductoComprar){
+            // Hay suficiente stock para ejecutar la compra
+            infoProductoElegido.stock = infoProductoElegido.stock - cantidadProductoComprar; // Actualizacion del stock
+            alert(`Excelente! Contamos con stock suficiente de ${nombreProductoComprar} para satisfacer su pedido. Presione enter para comenzar el proceso de pago del pedido realizado.`);
+            alert(`Contamos con los siguientes metodos de pago: \n 1) Transferencia bancaria \n 2) Tarjeta de credito \n 3) Mercadopago \n 4) Criptomonedas`);
+            let precioProductoElegido = infoProductoElegido.precio;
+            let formaPago = prompt("Por favor, ingrese el medio elegido");
+            tramitarPagoSegun(nombreProductoComprar, cantidadProductoComprar, precioProductoElegido, formaPago);
+            informarRetiroPedido(formaPago); 
+        } else {
+            // No hay stock para ejecutar la compra
+            alert(`Lo sentimos mucho. No hay stock suficiente de ${nombreProductoComprar}. \n A continuacion, le solicitaremos un email para notificarle cuando se reponga el stock. \n Presione enter para continuar`);
+            let email = prompt("Por favor, ingrese su email");
+            alert(`Perfecto, su email ${email} ha sido registrado correctamente. Muchas gracias por confiar en nosotros.`);
+        }
     }
 }
 
-
-
-/****************** SIMULADOR INTERACTIVO & ECOMMERCE ESPACIO ARCOIRIS CREAR ******************/
+/*********************** SIMULADOR INTERACTIVO & ECOMMERCE ESPACIO ARCOIRIS CREAR ***********************/
 
 // Seccion Administracion
 let administrador = prompt("Bienvenido al administrador e-commerce emergente de Espacio Arcoiris Crear. Ingrese su nombre para continuar.");
