@@ -1,1 +1,6 @@
+# Folders and files to ignore
+
 /.vscode
+
+tercer-preentrega/node_modules/
+tercer-preentrega/package-lock.json
